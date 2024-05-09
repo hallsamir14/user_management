@@ -15,7 +15,7 @@ from uuid import UUID
 from app.services.email_service import EmailService
 from app.models.user_model import UserRole
 import logging
-
+from app.kafka.kafka_producer import send_verfification_event
 settings = get_settings()
 logger = logging.getLogger(__name__)
 
@@ -71,7 +71,8 @@ class UserService:
 
             else:
                 new_user.verification_token = generate_verification_token()
-                await email_service.send_verification_email(new_user)
+                send_verfification_event("verification_event")
+                #await email_service.send_verification_email(new_user)
 
             session.add(new_user)
             await session.commit()
